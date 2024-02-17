@@ -1,0 +1,2 @@
+docker pull jchung150/comp3975
+docker run -p 8888:80 jchung150/comp3975

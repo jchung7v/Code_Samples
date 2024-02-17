@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cors Request</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+</head>
+<body>
+<div class="container">
+    <h3>Cors Request</h3>
+    <pre id="preOutput"></pre>
+
+    <script>
+        const data_url = "http://localhost:8888/apicrud_sqlite.php/students"
+
+        function showResponse(data) {
+            const pre = document.querySelector("#preOutput");
+            pre.innerText = JSON.stringify(data, null, 4);
+        };
+
+        async function getData(data_url) {
+            var response = await fetch(data_url);
+            if (!response.ok) {
+                // Catch errors
+                throw new Error(`Error. Status: ${response.status}`);
+            };
+            var data = await response.json();  // JSON data
+            await showResponse(data);
+        };
+
+        getData(data_url);
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Restaurant Information</title>
+  </head>
+  <body>
+    <form id="updateForm">
+      <input type="hidden" id="restaurantId" name="restaurantId" />
+      <div>
+        <label for="restaurantName">Restaurant Name:</label>
+        <input type="text" id="restaurantName" name="restaurantName" required />
+      </div>
+      <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required />
+      </div>
+      <div>
+        <label for="foodType">Food Type:</label>
+        <input type="text" id="foodType" name="foodType" required />
+      </div>
+      <button type="button" onclick="updateData()">Save Changes</button>
+      <button type="button" onclick="back()">Back</button>
+    </form>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const data_url = "http://localhost:8888/api/index.php/restaurants";
+
+      async function getData(url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          const restaurant = data.find(
+            (item) => item.RestaurantId.toString() === id
+          );
+          if (restaurant) {
+            document.getElementById("restaurantId").value =
+              restaurant.RestaurantId;
+            document.getElementById("restaurantName").value =
+              restaurant.RestaurantName;
+            document.getElementById("city").value = restaurant.City;
+            document.getElementById("foodType").value = restaurant.FoodType;
+          } else {
+            document.body.innerHTML = "<p>Restaurant not found.</p>";
+          }
+        } catch (error) {
+          console.error("Could not fetch the data", error);
+        }
+      }
+
+      async function updateData() {
+        const updateForm = document.getElementById("updateForm");
+        const formData = new FormData(updateForm);
+        const jsonData = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch(data_url + "/" + id, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            alert("Update successful!");
+          }
+        } catch (error) {
+          console.error("Failed to update data", error);
+        }
+      }
+
+      function back() {
+        window.location.href = "/index.html";
+      }
+
+      getData(data_url);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Produce & Consume API</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div id="place" class="container">
+      <h1 class="text-center">Local Restaurants</h1>
+    </div>
+
+    <script>
+      const data_url = "http://localhost:8888/api/index.php/restaurants";
+      var data = [];
+      async function getData(data_url) {
+        var response = await fetch(data_url);
+        if (!response.ok) {
+          throw new Error(`Error. Status: ${response.status}`);
+        }
+        var data = await response.json(); // JSON data
+        await renderTable(data); // send data into my sqlite database to save
+      }
+
+      function renderTable(data) {
+        const pprod = document.querySelector("#place");
+        const table = document.createElement("table");
+        let rows = `<thead><tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Food Type</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                </tr></thead>`;
+        for (let row of data) {
+          rows += `<tr>
+                <td>${row.RestaurantId}</td>
+                <td>${row.RestaurantName}</td>
+                <td>${row.City}</td>
+                <td>${row.FoodType}</td>
+                <td><a class='btn btn-small btn-primary' href='/crud/display.html?id=${row.RestaurantId}'>disp</a></td>
+                <td><a class='btn btn-small btn-warning' href='/crud/update.html?id=${row.RestaurantId}'>edit</a></td>
+                <td><a class='btn btn-small btn-danger' href='/crud/delete.html?id=${row.RestaurantId}'>del</a></td>
+                </tr>`;
+        }
+        table.innerHTML = rows;
+        pprod.appendChild(table);
+        table.className = "table table-striped";
+      }
+
+      function updateItem(id) {}
+      function deleteItem(id) {}
+
+      getData(data_url);
+    </script>
+  </body>
+</html>
